@@ -75,33 +75,39 @@ def calc_entropy(similarity_counter, word_count):
 
 # CALC ENTROPY FOR EACH WORD
 # NEED TO UTILIZE WORD MAPPING IN ORDER TO CONY CALC SIM MATRIX ONCE
-def find_best_word(similarity_matrix, word_list, viable_indices = None):
+def find_best_word(similarity_matrix, full_word_list, viable_indices=None):
 
-    word_count = len(word_list)
+    viable_indices = list(range(len(full_word_list))) if viable_indices is None else viable_indices
+
+    word_count = len(viable_indices)
     entropies = np.zeros(word_count)
 
-    for word_index, word in enumerate(word_list):
-        similarity_dist = Counter(similarity_matrix[word_index])
+    for word_index in viable_indices:
+
+        similarities = [similarity for index, similarity in enumerate(similarity_matrix[word_index])
+                        if index in viable_indices]
+
+        similarity_dist = Counter(similarities)
         #print(similarity_dist)
 
         # TODO: CANT TAKE ENTIRE ROW OF SIMILARITY DIST (INCLUDED COLUMNS CHANGE WHEN SUBSETTING)
         entropies[word_index] = calc_entropy(similarity_dist, word_count)
 
-    return word_list[np.argmax(entropies)]
+    return full_word_list[np.argmax(entropies)]
 
 # GIVEN A SIMILARITY MATRIX AND A SUBSET OF WORDS FROM THAT MATRIX
 # RETURN THE SUBSET OF THE SIMILARITY MATRIX
 
-def prune_word_list(similarity_matrix, word, target_similarity, word_dict):
+def get_viable_word_indices(similarity_matrix, word, target_similarity, word_dict):
 
     word_index = word_dict[word]
 
     return [index for index, similarity in enumerate(similarity_matrix[word_index]) if similarity == target_similarity]
 
 '''
-    prune_word_list(test_mat, "DOG", 1, word_to_index)
-    prune_word_list(test_mat, "DOG", 0, word_to_index)
-    prune_word_list(test_mat, "DOG", 3, word_to_index)
+    get_viable_word_indices(test_mat, "DOG", 1, word_to_index)
+    get_viable_word_indices(test_mat, "DOG", 0, word_to_index)
+    get_viable_word_indices(test_mat, "DOG", 3, word_to_index)
     prune_similarity_matrix(test_mat, [0,1])
 '''
 
@@ -129,13 +135,13 @@ words = [word.strip() for word in words]
 # print(words)
 
 # MAP WORDS TO INDICES
-word_dict, index_dict = word_map(words)
+word_dict = word_map(words)
 
 # BUILD SIMILARITY MATRIX
 similarity_matrix = calc_similarity_matrix(words)
 
 # FIND BEST WORD
-best_word = find_best_word(similarity_matrix, words, word_dict)
+best_word = find_best_word(similarity_matrix, words)
 
 print("Best Word Choice : {0}".format(best_word))
 print("Likeliness Distribution: ")
