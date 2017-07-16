@@ -162,17 +162,17 @@ while True:
     print(sorted(similarity_distribution.items()))
     print()
 
-    likeliness = input("Enter likeliness of best word or type 'ESC' to escape: \n")
+    likeness = input("Enter likeness of best word or type 'ESC' to escape: \n")
 
-    if likeliness == "ESC":
+    if likeness == "ESC":
         break
 
-    likeliness = int(likeliness)
+    likeness = int(likeness)
 
-    assert str(type(likeliness)) == "<class 'int'>"
-    assert 0 <= likeliness <= len(best_word)
+    assert str(type(likeness)) == "<class 'int'>"
+    assert likeness in similarity_distribution
 
-    viable_word_indices = get_viable_word_indices(similarity_matrix, best_word, likeliness, word_dict,
+    viable_word_indices = get_viable_word_indices(similarity_matrix, best_word, likeness, word_dict,
                                                   viable_word_indices)
 
 
