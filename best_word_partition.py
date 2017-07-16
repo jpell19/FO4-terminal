@@ -151,7 +151,9 @@ viable_word_indices = list(range(len(words)))
 while True:
 
     if len(viable_word_indices) == 1:
+        print()
         print("The password is {0}".format(words[viable_word_indices[0]]))
+        print()
         break
 
     best_word, expected_eliminations, similarity_distribution = find_best_word(similarity_matrix, words,
