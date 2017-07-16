@@ -151,18 +151,15 @@ viable_word_indices = list(range(len(words)))
 while True:
 
     if len(viable_word_indices) == 1:
-        print()
-        print("The password is {0}".format(words[viable_word_indices[0]]))
-        print()
+        print("\nThe password is {0}\n".format(words[viable_word_indices[0]]))
         break
 
     best_word, expected_eliminations, similarity_distribution = find_best_word(similarity_matrix, words,
                                                                                viable_word_indices)
 
-    print()
-    print("Best Word Choice : {0}, Expected Eliminations: {1}".format(best_word, expected_eliminations))
+    print("\nBest Word Choice : {0}\nExpected Eliminations: {1}".format(best_word, expected_eliminations))
     print("Likeliness Distribution: ")
-    print(similarity_distribution.most_common())
+    print(sorted(similarity_distribution.items()))
     print()
 
     likeliness = input("Enter likeliness of best word or type 'ESC' to escape: \n")
