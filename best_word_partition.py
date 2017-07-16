@@ -66,8 +66,8 @@ def calc_entropy(similarity_counter, word_count):
         # OPTIMIZATION: DONT NEED LOG AND NORMALIZATION TO MAXIMIZE ENTROPY
         # prob = float(similarity_counter[similarity])/word_count
         # entropy -= prob * log2(prob)
-        similarity_count = similarity_counter[similarity]
-        entropy += similarity_count*(word_count - similarity_count)
+        similarity_count = float(similarity_counter[similarity])
+        entropy += similarity_count*(word_count - similarity_count)/word_count
     return entropy
 
 #print(calc_entropy(similarity_counts, len(test_words)))
@@ -75,12 +75,12 @@ def calc_entropy(similarity_counter, word_count):
 
 # CALC ENTROPY FOR EACH WORD
 # NEED TO UTILIZE WORD MAPPING IN ORDER TO CONY CALC SIM MATRIX ONCE
-def find_best_word(similarity_matrix, full_word_list, viable_indices=None):
-
-    viable_indices = list(range(len(full_word_list))) if viable_indices is None else viable_indices
+def find_best_word(similarity_matrix, full_word_list, viable_indices):
 
     word_count = len(viable_indices)
-    entropies = np.zeros(word_count)
+    best_entropy = 0
+    best_word_index = -1
+    best_similarity_dist = Counter()
 
     for word_index in viable_indices:
 
@@ -90,19 +90,25 @@ def find_best_word(similarity_matrix, full_word_list, viable_indices=None):
         similarity_dist = Counter(similarities)
         #print(similarity_dist)
 
-        # TODO: CANT TAKE ENTIRE ROW OF SIMILARITY DIST (INCLUDED COLUMNS CHANGE WHEN SUBSETTING)
-        entropies[word_index] = calc_entropy(similarity_dist, word_count)
+        entropy = calc_entropy(similarity_dist, word_count)
 
-    return full_word_list[np.argmax(entropies)]
+        if entropy > best_entropy:
+            best_entropy = entropy
+            best_word_index = word_index
+            best_similarity_dist = similarity_dist
+
+    return full_word_list[best_word_index], best_entropy, best_similarity_dist
 
 # GIVEN A SIMILARITY MATRIX AND A SUBSET OF WORDS FROM THAT MATRIX
 # RETURN THE SUBSET OF THE SIMILARITY MATRIX
 
-def get_viable_word_indices(similarity_matrix, word, target_similarity, word_dict):
+
+def get_viable_word_indices(similarity_matrix, word, target_similarity, word_dict, viable_indices):
 
     word_index = word_dict[word]
 
-    return [index for index, similarity in enumerate(similarity_matrix[word_index]) if similarity == target_similarity]
+    return [index for index, similarity in enumerate(similarity_matrix[word_index])
+            if similarity == target_similarity and index in viable_indices]
 
 '''
     get_viable_word_indices(test_mat, "DOG", 1, word_to_index)
@@ -140,9 +146,40 @@ word_dict = word_map(words)
 # BUILD SIMILARITY MATRIX
 similarity_matrix = calc_similarity_matrix(words)
 
-# FIND BEST WORD
-best_word = find_best_word(similarity_matrix, words)
+viable_word_indices = list(range(len(words)))
 
-print("Best Word Choice : {0}".format(best_word))
-print("Likeliness Distribution: ")
-print(Counter(similarity_matrix[word_dict[best_word]]).most_common())
+while True:
+
+    if len(viable_word_indices) == 1:
+        print("The password is {0}".format(words[viable_word_indices[0]]))
+        break
+
+    best_word, expected_eliminations, similarity_distribution = find_best_word(similarity_matrix, words,
+                                                                               viable_word_indices)
+
+    print()
+    print("Best Word Choice : {0}, Expected Eliminations: {1}".format(best_word, expected_eliminations))
+    print("Likeliness Distribution: ")
+    print(similarity_distribution.most_common())
+    print()
+
+    likeliness = input("Enter likeliness of best word or type 'ESC' to escape: \n")
+
+    if likeliness == "ESC":
+        break
+
+    likeliness = int(likeliness)
+
+    assert str(type(likeliness)) == "<class 'int'>"
+    assert 0 <= likeliness <= len(best_word)
+
+    viable_word_indices = get_viable_word_indices(similarity_matrix, best_word, likeliness, word_dict,
+                                                  viable_word_indices)
+
+
+
+
+
+
+
+
