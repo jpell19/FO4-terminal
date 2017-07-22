@@ -136,25 +136,31 @@ file_name = args[1]
 with open(file_name) as file:
     words = file.readlines()
 
-words = [word.strip() for word in words]
+word_list = [word.strip() for word in words]
 
 # print(words)
 
+word_count = len(word_list)
+
 # MAP WORDS TO INDICES
-word_dict = word_map(words)
+word_dict = word_map(word_list)
+
 
 # BUILD SIMILARITY MATRIX
-similarity_matrix = calc_similarity_matrix(words)
+similarity_matrix = calc_similarity_matrix(word_list)
 
-viable_word_indices = list(range(len(words)))
+if np.linalg.matrix_rank(similarity_matrix) == word_count:
+    print("\nPuzzle Solveable: Full Rank Matrix\n")
+
+viable_word_indices = list(range(len(word_list)))
 
 while True:
 
     if len(viable_word_indices) == 1:
-        print("\nThe password is {0}\n".format(words[viable_word_indices[0]]))
+        print("\nThe password is {0}\n".format(word_list[viable_word_indices[0]]))
         break
 
-    best_word, expected_eliminations, similarity_distribution = find_best_word(similarity_matrix, words,
+    best_word, expected_eliminations, similarity_distribution = find_best_word(similarity_matrix, word_list,
                                                                                viable_word_indices)
 
     print("\nBest Word Choice : {0}\nExpected Eliminations: {1}".format(best_word, expected_eliminations))
@@ -175,7 +181,14 @@ while True:
     viable_word_indices = get_viable_word_indices(similarity_matrix, best_word, likeness, word_dict,
                                                   viable_word_indices)
 
-
+with open("./data/Terminal Log.txt", "a") as file:
+    file.write("--------------------- ")
+    file.write(best_word)
+    file.write("\n")
+    for word in word_list:
+        file.write(word)
+        file.write("\n")
+    file.close()
 
 
 
