@@ -2,3 +2,6 @@
 /playground
 /data
 /Screenshots
+.DS_Store
+*.swp
+.idea
