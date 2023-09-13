@@ -12,5 +12,5 @@
 
 #### Overview
 
-This is a console app that accepts a list of word choices from the Fallout video game series terminal hacking minigame, emulated here by [Jet Holt](https://jetholt.com/hacking/).  I experimented with OpenCV to normalize and segment the console word choices from photos at different angles/lighting , but haven't got to integrating the OCR yet.
+This is a console app that accepts a list of word choices from the Fallout video game series terminal hacking minigame, emulated [here](https://jetholt.com/hacking/) by Jet Holt.  I experimented with OpenCV to normalize and segment the console word choices from photos at different angles/lighting , but haven't got to integrating the OCR yet.
   

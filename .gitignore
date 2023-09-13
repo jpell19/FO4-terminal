@@ -1,5 +1,8 @@
 /notes
-/playground
+*.pyc
+*.png
+*.jpg
+/playground/Object_Detection_demo_LIVE
 /data
 /Screenshots
 .DS_Store
