@@ -4,7 +4,7 @@
 
 <div align="center">
 
-https://user-images.githubusercontent.com/24516535/267521661-1b54dbf7-2bca-44a0-a0c3-6a5f37520637.png
+![Example bounding box segmenting FO4 terminal from image](https://user-images.githubusercontent.com/24516535/267521661-1b54dbf7-2bca-44a0-a0c3-6a5f37520637.png)
 
 </div>
 
